@@ -95,7 +95,7 @@ static PyObject* XilOut_list(PyObject* self, PyObject *args){
 		list = PySequence_Fast(hop_list, "expected a sequence");
 		value = (int)PyInt_AsLong(PyList_GET_ITEM(list, i));
 
-		printf("Mapping Hop Array index number = %d\n", value);
+		//printf("Mapping Hop Array index number = %d\n", value);
 		*((unsigned long *) (mapped_dev_base + DATA_OFFSET*i)) = FTWlookup[value];
 		//*((unsigned long *) (mapped_dev_base + DATA_OFFSET)) = 1;
 	}
