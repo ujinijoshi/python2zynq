@@ -17,14 +17,14 @@
 //define an exception
 //static PyObject *exmodError;
 
-static PyObject* push(PyObject* self, PyObject *args){
+static PyObject* XilOut32(PyObject* self, PyObject *args){
 	int memfd;
 	void *mapped_base, *mapped_dev_base; 
 	off_t dev_base = GPIO_BASE_ADDRESS; //default GPIO address
 	PyObject *hop_list;
 	int value;
 	double len=0;
-	if(!PyArg_ParseTuple(args, "i", &value))
+	if(!PyArg_ParseTuple(args, "Ii", &dev_base, &value))
 	{
 		return NULL;
 	}
@@ -34,7 +34,8 @@ static PyObject* push(PyObject* self, PyObject *args){
 		printf("Can't open /dev/mem.\n");
 		exit(0);
 	}
-	//printf("/dev/mem opened.\n"); 
+	//printf("/dev/mem opened.\n");
+	//printf("XilOut at address %p.\n", dev_base);  
     
 	mapped_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, memfd, dev_base & ~MAP_MASK);
     	if (mapped_base == (void *) -1) {
@@ -58,14 +59,14 @@ static PyObject* push(PyObject* self, PyObject *args){
 	return Py_BuildValue("i", value);
 }
 
-static PyObject* pushlist(PyObject* self, PyObject *args){
+static PyObject* XilOut_list(PyObject* self, PyObject *args){
 	int memfd;
 	void *mapped_base, *mapped_dev_base; 
 	off_t dev_base = BRAM_BASE_ADDRESS; //default GPIO address
 	PyObject *hop_list=NULL,*pvalue=NULL,*list=NULL;
 	int value;
 	Py_ssize_t len=0,i;
-	if(!PyArg_ParseTuple(args, "O", &hop_list))
+	if(!PyArg_ParseTuple(args, "IO",&dev_base, &hop_list))
 	{
 		printf("py opject parsing error\n");
 		return NULL;
@@ -107,14 +108,14 @@ static PyObject* pushlist(PyObject* self, PyObject *args){
 	return Py_BuildValue("i", value);
 }
 
-static PyObject* pop(PyObject* self, PyObject *args){
+static PyObject* XilIn32(PyObject* self, PyObject *args){
 	int memfd;
 	void *mapped_base, *mapped_dev_base; 
 	off_t dev_base = BRAM_BASE_ADDRESS; //default GPIO address
 	PyObject *hop_list;
 	int value,offset;
 	double len=0;
-	if(!PyArg_ParseTuple(args, "i", &offset))
+	if(!PyArg_ParseTuple(args, "Ii",&dev_base, &offset))
 	{
 		return NULL;
 	}
@@ -152,9 +153,9 @@ static PyObject* pop(PyObject* self, PyObject *args){
 
 
 static PyMethodDef py2pl_methods[] = {
-	{"push",   push, METH_VARARGS,"push data to pl address"},
-    {"pushlist",   pushlist, METH_VARARGS,"push list data to pl address"},
-    {"pop",   pop, METH_VARARGS,"pop value of bram offset address"},
+	{"XilOut32",   XilOut32, METH_VARARGS,"push data to pl address"},
+    {"XilOut_list",   XilOut_list, METH_VARARGS,"push list data to pl BRAM address"},
+    {"XilIn32",   XilIn32, METH_VARARGS,"pop value of bram offset address"},
     
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
