@@ -1,5 +1,5 @@
-## python2zynq
+# python2zynq
 
-#Build Process
+##Build Process
 
-`python setup install`
+`python pl_setup install`
